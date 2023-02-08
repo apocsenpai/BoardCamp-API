@@ -1,7 +1,7 @@
 import db from "../database/database.connection.js";
 import internalServerError from "../utils/functions/internalServerError.js";
 
-const create = async (req, res) => {
+async function create(req, res) {
   const { name, image, stockTotal, pricePerDay } = res.sanitizedParams;
 
   try {
@@ -15,9 +15,9 @@ const create = async (req, res) => {
   } catch (error) {
     internalServerError(res, error);
   }
-};
+}
 
-const selectAll = async (req, res) => {
+async function selectAll(req, res) {
   try {
     const { rows: games } = await db.query("SELECT * FROM games");
 
@@ -25,6 +25,6 @@ const selectAll = async (req, res) => {
   } catch (error) {
     internalServerError(res, error);
   }
-};
+}
 
 export default { create, selectAll };
