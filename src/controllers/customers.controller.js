@@ -16,4 +16,14 @@ async function create(req, res) {
   }
 }
 
-export default { create };
+async function listAll(req, res) {
+  try {
+    const { rows: customers } = await db.query("SELECT * FROM customers");
+
+    res.send(customers);
+  } catch (error) {
+    internalServerError(res, error);
+  }
+}
+
+export default { create, listAll };

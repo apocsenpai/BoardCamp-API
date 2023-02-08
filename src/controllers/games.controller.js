@@ -17,7 +17,7 @@ async function create(req, res) {
   }
 }
 
-async function selectAll(req, res) {
+async function listAll(req, res) {
   try {
     const { rows: games } = await db.query("SELECT * FROM games");
 
@@ -27,4 +27,4 @@ async function selectAll(req, res) {
   }
 }
 
-export default { create, selectAll };
+export default { create, listAll };

@@ -14,5 +14,6 @@ router.post(
   isDataAlreadyExist("customers", "cpf"),
   customersController.create
 );
+router.get("/", customersController.listAll);
 
 export { router as customersRouter };

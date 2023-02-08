@@ -14,6 +14,6 @@ router.post(
   isDataAlreadyExist("games", "name"),
   gamesController.create
 );
-router.get("/", gamesController.selectAll);
+router.get("/", gamesController.listAll);
 
 export { router as gamesRouter };
