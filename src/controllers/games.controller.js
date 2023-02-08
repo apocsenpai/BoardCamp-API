@@ -17,6 +17,14 @@ const create = async (req, res) => {
   }
 };
 
+const selectAll = async (req, res) => {
+  try {
+    const { rows: games } = await db.query("SELECT * FROM games");
 
+    res.send(games);
+  } catch (error) {
+    internalServerError(res, error);
+  }
+};
 
-export default { create };
+export default { create, selectAll };
