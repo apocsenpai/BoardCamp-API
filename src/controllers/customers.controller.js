@@ -37,7 +37,7 @@ async function listById(req, res) {
 
     if (!rowCount) return res.sendStatus(404);
 
-    res.send(customers);
+    res.send(customers[0]);
   } catch (error) {
     internalServerError(res, error);
   }

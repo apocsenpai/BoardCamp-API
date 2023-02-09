@@ -2,7 +2,7 @@ import sanitizeObject from "../utils/functions/sanitizeObject.js";
 import db from "../database/database.connection.js";
 import internalServerError from "../utils/functions/internalServerError.js";
 
-export const validateSchema = (schema) => {
+export function validateSchema(schema) {
   return (req, res, next) => {
     res.sanitizedParams = sanitizeObject({
       ...req.body,
@@ -21,9 +21,9 @@ export const validateSchema = (schema) => {
 
     next();
   };
-};
+}
 
-export const isDataAlreadyExist = (table, key) => {
+export function isDataAlreadyExist(table, key) {
   return async (req, res, next) => {
     const data = res.sanitizedParams[key];
 
@@ -34,15 +34,37 @@ export const isDataAlreadyExist = (table, key) => {
       );
 
       if (rowCount)
-        return res
-          .status(409)
-          .send({
-            message: `${key[0].toUpperCase() + key.substr(1)} já cadastrado!`,
-          });
+        return res.status(409).send({
+          message: `${key[0].toUpperCase() + key.substr(1)} já cadastrado!`,
+        });
 
       next();
     } catch (error) {
       internalServerError(res, error);
     }
   };
-};
+}
+
+export function checkIdIsRegisteredInThatTable(table, key) {
+  return async (req, res, next) => {
+    const id = res.sanitizedParams[key];
+
+    try {
+      const { rowCount, rows: game } = await db.query(
+        `SELECT * FROM ${table} WHERE id = $1`,
+        [id]
+      );
+
+      if (!rowCount) return res.sendStatus(400);
+
+      res.locals = {
+        pricePerDay: game[0].pricePerDay,
+        stockTotal: game[0].stockTotal,
+      };
+
+      next();
+    } catch (error) {
+      internalServerError(res, error);
+    }
+  };
+}

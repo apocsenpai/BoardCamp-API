@@ -5,8 +5,9 @@ const joiMessages = {
   birthday: "Birthday must have a date format.",
   image: "Image must be a valid URL.",
   stockTotal: "Stock must have only numeric digits.",
-  pricePerDay: "Stock must have only numeric digits.",
-  id: "Id must be a number."
+  pricePerDay: "Price must have only numeric digits.",
+  id: "Id must be a number.",
+  daysRented: "Days rented must have only numeric digits.",
 };
 
 export default joiMessages;

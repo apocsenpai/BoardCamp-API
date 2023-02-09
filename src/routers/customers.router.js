@@ -5,8 +5,8 @@ import {
   isDataAlreadyExist,
   validateSchema,
 } from "../middlewares/global.middlewares.js";
-import createCustomerSchema from "../schemas/customer.schemas/create.js";
-import updateCustomerSchema from "../schemas/customer.schemas/update.js";
+import createCustomerSchema from "../schemas/customers.schemas/create.js";
+import updateCustomerSchema from "../schemas/customers.schemas/update.js";
 import idSchema from "../schemas/id.schema.js";
 
 const router = Router("/customers");
