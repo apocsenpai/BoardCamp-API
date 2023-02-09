@@ -5,7 +5,11 @@ import {
   onlyNumbers,
 } from "../../utils/constants/regex.js";
 
-const createCustomerSchema = Joi.object({
+const updateCustomerSchema = Joi.object({
+  id: Joi.string()
+    .regex(onlyNumbers)
+    .messages(handleJoiMessage("id"))
+    .required(),
   name: Joi.string()
     .regex(onlyLetterAndSpaces)
     .messages(handleJoiMessage("name"))
@@ -24,4 +28,4 @@ const createCustomerSchema = Joi.object({
   birthday: Joi.date().messages(handleJoiMessage("birthday")).required(),
 });
 
-export default createCustomerSchema;
+export default updateCustomerSchema;

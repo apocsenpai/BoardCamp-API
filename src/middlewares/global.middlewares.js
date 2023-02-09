@@ -36,7 +36,9 @@ export const isDataAlreadyExist = (table, key) => {
       if (rowCount)
         return res
           .status(409)
-          .send({ message: `${key[0].toUpperCase()+key.substr(1)} já cadastrado!` });
+          .send({
+            message: `${key[0].toUpperCase() + key.substr(1)} já cadastrado!`,
+          });
 
       next();
     } catch (error) {
