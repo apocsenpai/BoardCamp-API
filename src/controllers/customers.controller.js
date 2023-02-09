@@ -26,4 +26,18 @@ async function listAll(req, res) {
   }
 }
 
-export default { create, listAll };
+async function listById(req, res){
+  const id = Number(res.sanitizedParams.id);
+
+  try {
+    const {rowCount, rows: customers} = await db.query(`SELECT * FROM customers WHERE id = $1`, [id]);
+
+    if(!rowCount) return res.sendStatus(404);
+
+    res.send(customers);
+  } catch (error) {
+    internalServerError(res, error)
+  }
+}
+
+export default { create, listAll, listById };

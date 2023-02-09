@@ -4,13 +4,13 @@ import {
   isDataAlreadyExist,
   validateSchema,
 } from "../middlewares/global.middlewares.js";
-import gameSchema from "../schemas/gameSchema.js";
+import createGameSchema from "../schemas/game.schemas/create.js";
 
 const router = Router("/games");
 
 router.post(
   "/",
-  validateSchema(gameSchema),
+  validateSchema(createGameSchema),
   isDataAlreadyExist("games", "name"),
   gamesController.create
 );
