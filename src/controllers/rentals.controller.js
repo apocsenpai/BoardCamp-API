@@ -79,7 +79,7 @@ async function updateById(req, res) {
   const { rentDate, daysRented, originalPrice } = res.locals;
   const id = Number(res.sanitizedParams.id);
 
-  const returnDate = '2023-02-18';
+  const returnDate = dayjs().format("YYYY-MM-DD");
 
   const delayFee = calculateDelayFee(
     returnDate,
