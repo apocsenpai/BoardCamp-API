@@ -1,6 +1,7 @@
 import db from "../database/database.connection.js";
 import internalServerError from "../utils/functions/internalServerError.js";
 import dayjs from "dayjs";
+import calculateDelayFee from "../utils/functions/calculateDelayFee.js";
 
 async function create(req, res) {
   const { customerId, gameId, daysRented } = res.sanitizedParams;
@@ -63,7 +64,7 @@ async function listAll(req, res) {
 }
 
 async function deleteById(req, res) {
-  const { id } = res.sanitizedParams;
+  const id = Number(res.sanitizedParams.id);
 
   try {
     await db.query(`DELETE FROM rentals WHERE id = $1`, [id]);
@@ -74,4 +75,29 @@ async function deleteById(req, res) {
   }
 }
 
-export default { create, listAll, deleteById };
+async function updateById(req, res) {
+  const { rentDate, daysRented, originalPrice } = res.locals;
+  const id = Number(res.sanitizedParams.id);
+
+  const returnDate = '2023-02-18';
+
+  const delayFee = calculateDelayFee(
+    returnDate,
+    rentDate,
+    daysRented,
+    originalPrice
+  );
+
+  try {
+    await db.query(
+      `UPDATE rentals SET "returnDate" = $1, "delayFee" = $2 WHERE id = $3`,
+      [returnDate, delayFee, id]
+    );
+
+    res.sendStatus(200);
+  } catch (error) {
+    internalServerError(res, error);
+  }
+}
+
+export default { create, listAll, deleteById, updateById };

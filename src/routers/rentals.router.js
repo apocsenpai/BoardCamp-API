@@ -22,11 +22,11 @@ router.post(
   rentalsController.create
 );
 router.post(
-  "/rentals/:id/return",
+  "/:id/return",
   validateSchema(idSchema),
   checkIdIsRegisteredInThatTable("rentals", "id"),
   checkReturnDateIsNotNull("rentalReturn"),
-  
+  rentalsController.updateById
 );
 
 router.get("/", rentalsController.listAll);

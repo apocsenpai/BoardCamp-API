@@ -26,14 +26,22 @@ export function checkReturnDateIsNotNull(key) {
     const id = Number(res.sanitizedParams.id);
 
     try {
-      const { rowCount } = await db.query(
-        `SELECT id FROM rentals WHERE id = $1 AND "returnDate" IS NOT NULL`,
+      const { rowCount, rows: rentals } = await db.query(
+        `SELECT "rentDate", "daysRented", "originalPrice" FROM rentals WHERE id = $1 AND "returnDate" IS NULL`,
         [id]
       );
 
-      if (!rowCount && key === "delete") return res.sendStatus(400);
+      if (rowCount && key === "delete") return res.sendStatus(400);
 
-      if(rowCount && key === "rentalReturn") return res.sendStatus(400);
+      if (key === "rentalReturn") {
+        if (!rowCount) return res.sendStatus(400);
+
+        res.locals = {
+          rentDate: rentals[0].rentDate,
+          daysRented: rentals[0].daysRented,
+          originalPrice: rentals[0].originalPrice,
+        };
+      }
 
       next();
     } catch (error) {
