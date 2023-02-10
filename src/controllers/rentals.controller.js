@@ -19,4 +19,45 @@ async function create(req, res) {
   }
 }
 
-export default { create };
+async function listAll(req, res) {
+  try {
+    const { rows: resultRentals } = await db.query(
+      `SELECT rentals.*, customers.name AS customer_name, games.name AS game_name FROM rentals
+      INNER JOIN games ON rentals."gameId" = games.id
+      INNER JOIN customers ON rentals."customerId" = customers.id`
+    );
+
+    const rentals = resultRentals.map(
+      ({
+        id,
+        customerId,
+        gameId,
+        rentDate,
+        daysRented,
+        returnDate,
+        originalPrice,
+        delayFee,
+        customer_name,
+        game_name,
+      }) => {
+        return {
+          id,
+          customerId,
+          gameId,
+          rentDate,
+          daysRented,
+          returnDate,
+          originalPrice,
+          delayFee,
+          customer: { id: customerId, name: customer_name },
+          game: { id: gameId, name: game_name },
+        };
+      }
+    );
+
+    res.send(rentals)
+  } catch (error) {
+    internalServerError(res, error);
+  }
+}
+export default { create, listAll };

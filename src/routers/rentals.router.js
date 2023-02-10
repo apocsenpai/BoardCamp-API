@@ -19,7 +19,7 @@ router.post(
 );
 router.post("/rentals/:id/return");
 
-router.get("/");
+router.get("/", rentalsController.listAll);
 
 router.delete("/:id");
 
