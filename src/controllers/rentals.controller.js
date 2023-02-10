@@ -9,7 +9,8 @@ async function create(req, res) {
 
   try {
     await db.query(
-      `INSERT INTO rentals ("customerId", "gameId", "rentDate", "daysRented", "originalPrice", "returnDate", "delayFee" ) VALUES ($1, $2, $3, $4, $5, null, null)`,
+      `INSERT INTO rentals ("customerId", "gameId", "rentDate", "daysRented", "originalPrice", "returnDate", "delayFee" )
+      VALUES ($1, $2, $3, $4, $5, null, null)`,
       [customerId, gameId, rentDate, daysRented, originalPrice]
     );
 
@@ -55,9 +56,22 @@ async function listAll(req, res) {
       }
     );
 
-    res.send(rentals)
+    res.send(rentals);
   } catch (error) {
     internalServerError(res, error);
   }
 }
-export default { create, listAll };
+
+async function deleteById(req, res) {
+  const { id } = res.sanitizedParams;
+
+  try {
+    await db.query(`DELETE FROM rentals WHERE id = $1`, [id]);
+
+    res.sendStatus(200);
+  } catch (error) {
+    internalServerError(res, error);
+  }
+}
+
+export default { create, listAll, deleteById };

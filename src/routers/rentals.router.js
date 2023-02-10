@@ -4,7 +4,11 @@ import {
   checkIdIsRegisteredInThatTable,
   validateSchema,
 } from "../middlewares/global.middlewares.js";
-import { checkGameIsAvailable } from "../middlewares/rentals.middlewares.js";
+import {
+  checkGameIsAvailable,
+  checkReturnDateIsNotNull,
+} from "../middlewares/rentals.middlewares.js";
+import idSchema from "../schemas/id.schema.js";
 import createRentalSchema from "../schemas/rentals.schemas/create.js";
 
 const router = Router("/rentals");
@@ -17,10 +21,22 @@ router.post(
   checkGameIsAvailable,
   rentalsController.create
 );
-router.post("/rentals/:id/return");
+router.post(
+  "/rentals/:id/return",
+  validateSchema(idSchema),
+  checkIdIsRegisteredInThatTable("rentals", "id"),
+  checkReturnDateIsNotNull("rentalReturn"),
+  
+);
 
 router.get("/", rentalsController.listAll);
 
-router.delete("/:id");
+router.delete(
+  "/:id",
+  validateSchema(idSchema),
+  checkIdIsRegisteredInThatTable("rentals", "id"),
+  checkReturnDateIsNotNull("delete"),
+  rentalsController.deleteById
+);
 
 export { router as rentalsRouter };

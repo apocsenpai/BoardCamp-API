@@ -50,17 +50,20 @@ export function checkIdIsRegisteredInThatTable(table, key) {
     const id = res.sanitizedParams[key];
 
     try {
-      const { rowCount, rows: game } = await db.query(
+      const { rowCount, rows: result } = await db.query(
         `SELECT * FROM ${table} WHERE id = $1`,
         [id]
       );
 
-      if (!rowCount) return res.sendStatus(400);
+      if (!rowCount)
+        return table === "rentals" ? res.sendStatus(404) : res.sendStatus(400);
 
-      res.locals = {
-        pricePerDay: game[0].pricePerDay,
-        stockTotal: game[0].stockTotal,
-      };
+      if (table === "games") {
+        res.locals = {
+          pricePerDay: result[0].pricePerDay,
+          stockTotal: result[0].stockTotal,
+        };
+      }
 
       next();
     } catch (error) {
