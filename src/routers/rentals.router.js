@@ -5,11 +5,13 @@ import {
   validateSchema,
 } from "../middlewares/global.middlewares.js";
 import {
+  buildListRentalsQuery,
   checkGameIsAvailable,
   checkReturnDateIsNotNull,
 } from "../middlewares/rentals.middlewares.js";
 import idSchema from "../schemas/id.schema.js";
 import createRentalSchema from "../schemas/rentals.schemas/create.js";
+import showRentalSchema from "../schemas/rentals.schemas/show.js";
 
 const router = Router("/rentals");
 
@@ -29,7 +31,7 @@ router.post(
   rentalsController.updateById
 );
 
-router.get("/", rentalsController.listAll);
+router.get("/", validateSchema(showRentalSchema), buildListRentalsQuery, rentalsController.listAll);
 
 router.delete(
   "/:id",

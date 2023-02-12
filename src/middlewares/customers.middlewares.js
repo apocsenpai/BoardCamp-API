@@ -15,10 +15,39 @@ export async function verifyCpfOwner(req, res, next) {
 
     if (rowCount === 2) return res.sendStatus(409);
 
-    if(result[0].id!==requestId) return res.sendStatus(404);
+    if (result[0].id !== requestId) return res.sendStatus(404);
 
     next();
   } catch (error) {
     internalServerError(res, error);
   }
+}
+export function buildListCustomersQuery(req, res, next) {
+  const queryParams = res.sanitizedParams;
+  const mainQuery = `SELECT * FROM customers`;
+
+  if (!Object.keys(queryParams).length) {
+    res.locals.query = mainQuery;
+    return next();
+  }
+
+  const whereParams = [];
+  let order = "";
+
+  Object.keys(queryParams).forEach((key) => {
+    if (key === "order")
+      order = queryParams["desc"]
+        ? `ORDER BY ${queryParams[key]} DESC`
+        : `ORDER BY ${queryParams[key]}`;
+
+    if (key === "cpf") whereParams.push(`${key} ILIKE '${queryParams[key]}%'`);
+  });
+
+  const whereQuery = whereParams.length
+    ? `WHERE ${whereParams.join(" AND ")}`
+    : "";
+
+  res.locals.query = `${mainQuery} ${whereQuery} ${order}`;
+
+  next();
 }

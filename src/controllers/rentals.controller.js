@@ -2,7 +2,6 @@ import db from "../database/database.connection.js";
 import internalServerError from "../utils/functions/internalServerError.js";
 import dayjs from "dayjs";
 import calculateDelayFee from "../utils/functions/calculateDelayFee.js";
-import { buildOrderQuery } from "../utils/functions/queryBuilders.js";
 
 async function create(req, res) {
   const { customerId, gameId, daysRented } = res.sanitizedParams;
@@ -23,16 +22,10 @@ async function create(req, res) {
 }
 
 async function listAll(req, res) {
-  const order = req.query.order;
-  const desc = req.query.desc;
-  const queryOrder = buildOrderQuery(order, desc);
+  const {query} = res.locals;
 
   try {
-    const { rows: resultRentals } = await db.query(
-      `SELECT rentals.*, customers.name AS customer_name, games.name AS game_name FROM rentals
-      INNER JOIN games ON rentals."gameId" = games.id
-      INNER JOIN customers ON rentals."customerId" = customers.id ${queryOrder}`
-    );
+    const { rows: resultRentals } = await db.query(query);
 
     const rentals = resultRentals.map(
       ({

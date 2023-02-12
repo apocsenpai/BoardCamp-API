@@ -1,6 +1,5 @@
 import db from "../database/database.connection.js";
 import internalServerError from "../utils/functions/internalServerError.js";
-import { buildOrderQuery } from "../utils/functions/queryBuilders.js";
 
 async function create(req, res) {
   const { name, phone, cpf, birthday } = res.sanitizedParams;
@@ -18,14 +17,10 @@ async function create(req, res) {
 }
 
 async function listAll(req, res) {
-  const order = req.query.order;
-  const desc = req.query.desc;
-  const queryOrder = buildOrderQuery(order, desc);
+  const { query } = res.locals;
 
   try {
-    const { rows: customers } = await db.query(
-      `SELECT * FROM customers ${queryOrder}`
-    );
+    const { rows: customers } = await db.query(query);
 
     res.send(customers);
   } catch (error) {

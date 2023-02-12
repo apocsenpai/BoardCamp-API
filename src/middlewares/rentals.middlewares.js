@@ -49,3 +49,38 @@ export function checkReturnDateIsNotNull(key) {
     }
   };
 }
+
+export function buildListRentalsQuery(req, res, next) {
+  const queryParams = res.sanitizedParams;
+  const mainQuery = `SELECT rentals.*, customers.name AS customer_name, games.name AS game_name FROM rentals
+  INNER JOIN games ON rentals."gameId" = games.id
+  INNER JOIN customers ON rentals."customerId" = customers.id`;
+
+  if (!Object.keys(queryParams).length) {
+    res.locals.query = mainQuery;
+    return next();
+  }
+
+  const whereParams = [];
+  let order = "";
+
+  Object.keys(queryParams).forEach((key) => {
+    if (key === "order")
+      order = queryParams["desc"]
+        ? `ORDER BY ${queryParams[key]} DESC`
+        : `ORDER BY ${queryParams[key]}`;
+
+    if (key === "gameId")
+      whereParams.push(`rentals."gameId" = ${queryParams[key]}`);
+
+    if (key === "customerId")
+      whereParams.push(`rentals."customerId" = ${queryParams[key]}`);
+  });
+
+  const whereQuery = whereParams.length ? `WHERE ${whereParams.join(" AND ")}`
+  : '';
+
+  res.locals.query = `${mainQuery} ${whereQuery} ${order}`;
+
+  next();
+}

@@ -1,11 +1,12 @@
 import { Router } from "express";
 import customersController from "../controllers/customers.controller.js";
-import { verifyCpfOwner } from "../middlewares/customers.middlewares.js";
+import { buildListCustomersQuery, verifyCpfOwner } from "../middlewares/customers.middlewares.js";
 import {
   isDataAlreadyExist,
   validateSchema,
 } from "../middlewares/global.middlewares.js";
 import createCustomerSchema from "../schemas/customers.schemas/create.js";
+import showCostumerSchema from "../schemas/customers.schemas/show.js";
 import updateCustomerSchema from "../schemas/customers.schemas/update.js";
 import idSchema from "../schemas/id.schema.js";
 
@@ -18,7 +19,12 @@ router.post(
   customersController.create
 );
 
-router.get("/", customersController.listAll);
+router.get(
+  "/",
+  validateSchema(showCostumerSchema),
+  buildListCustomersQuery,
+  customersController.listAll
+);
 router.get("/:id", validateSchema(idSchema), customersController.listById);
 
 router.put(
