@@ -71,19 +71,25 @@ export function buildListRentalsQuery(req, res, next) {
         ? `ORDER BY ${queryParams[key]} DESC`
         : `ORDER BY ${queryParams[key]}`;
 
-    if (key === "gameId")
-      whereParams.push(`rentals."gameId" = ${queryParams[key]}`);
+    if (key === "status")
+      whereParams.push(
+        `"returnDate" IS ${queryParams[key] === "open" ? "" : "NOT"} NULL`
+      );
 
-    if (key === "customerId")
-      whereParams.push(`rentals."customerId" = ${queryParams[key]}`);
+    if (key === "gameId" || key === `customerId`)
+      whereParams.push(`rentals."${key}" = ${queryParams[key]}`);
+
+    if (key === "startDate")
+      whereParams.push(`"rentDate" >= '${queryParams[key]}'`);
 
     if (key === "limit") paginationParams.push(`LIMIT ${queryParams[key]}`);
 
     if (key === "offset") paginationParams.push(`OFFSET ${queryParams[key]}`);
   });
 
-  const whereQuery = whereParams.length ? `WHERE ${whereParams.join(" AND ")}`
-  : '';
+  const whereQuery = whereParams.length
+    ? `WHERE ${whereParams.join(" AND ")}`
+    : "";
 
   const paginationQuery = paginationParams.join(" ");
 

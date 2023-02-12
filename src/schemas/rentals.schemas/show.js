@@ -7,6 +7,8 @@ const showRentalSchema = Joi.object({
   gameId: Joi.number().min(1),
   offset: Joi.number().min(0),
   limit: Joi.number().min(1),
+  status: Joi.string().valid("open", "closed"),
+  startDate: Joi.date(),
 });
 
 export default showRentalSchema;
