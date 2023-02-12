@@ -63,6 +63,7 @@ export function buildListRentalsQuery(req, res, next) {
 
   const whereParams = [];
   let order = "";
+  let paginationParams = [];
 
   Object.keys(queryParams).forEach((key) => {
     if (key === "order")
@@ -75,12 +76,18 @@ export function buildListRentalsQuery(req, res, next) {
 
     if (key === "customerId")
       whereParams.push(`rentals."customerId" = ${queryParams[key]}`);
+
+    if (key === "limit") paginationParams.push(`LIMIT ${queryParams[key]}`);
+
+    if (key === "offset") paginationParams.push(`OFFSET ${queryParams[key]}`);
   });
 
   const whereQuery = whereParams.length ? `WHERE ${whereParams.join(" AND ")}`
   : '';
 
-  res.locals.query = `${mainQuery} ${whereQuery} ${order}`;
+  const paginationQuery = paginationParams.join(" ");
+
+  res.locals.query = `${mainQuery} ${whereQuery} ${order} ${paginationQuery}`;
 
   next();
 }

@@ -33,6 +33,7 @@ export function buildListCustomersQuery(req, res, next) {
 
   const whereParams = [];
   let order = "";
+  let paginationParams = [];
 
   Object.keys(queryParams).forEach((key) => {
     if (key === "order")
@@ -41,13 +42,19 @@ export function buildListCustomersQuery(req, res, next) {
         : `ORDER BY ${queryParams[key]}`;
 
     if (key === "cpf") whereParams.push(`${key} ILIKE '${queryParams[key]}%'`);
+
+    if (key === "limit") paginationParams.push(`LIMIT ${queryParams[key]}`);
+
+    if (key === "offset") paginationParams.push(`OFFSET ${queryParams[key]}`);
   });
 
   const whereQuery = whereParams.length
     ? `WHERE ${whereParams.join(" AND ")}`
     : "";
 
-  res.locals.query = `${mainQuery} ${whereQuery} ${order}`;
+  const paginationQuery = paginationParams.join(" ");
+
+  res.locals.query = `${mainQuery} ${whereQuery} ${order} ${paginationQuery}`;
 
   next();
 }

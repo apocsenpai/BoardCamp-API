@@ -5,6 +5,8 @@ const showRentalSchema = Joi.object({
   desc: Joi.boolean(),
   customerId: Joi.number().min(1),
   gameId: Joi.number().min(1),
+  offset: Joi.number().min(0),
+  limit: Joi.number().min(1),
 });
 
 export default showRentalSchema;
