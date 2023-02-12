@@ -68,8 +68,8 @@ export function buildListRentalsQuery(req, res, next) {
   Object.keys(queryParams).forEach((key) => {
     if (key === "order")
       order = queryParams["desc"]
-        ? `ORDER BY ${queryParams[key]} DESC`
-        : `ORDER BY ${queryParams[key]}`;
+        ? `ORDER BY "${queryParams[key]}" DESC`
+        : `ORDER BY "${queryParams[key]}"`;
 
     if (key === "status")
       whereParams.push(
