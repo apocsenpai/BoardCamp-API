@@ -3,9 +3,9 @@ import rentalsController from "../controllers/rentals.controller.js";
 import {
   checkIdIsRegisteredInThatTable,
   validateSchema,
+  buildListQuery,
 } from "../middlewares/global.middlewares.js";
 import {
-  buildListRentalsQuery,
   checkGameIsAvailable,
   checkReturnDateIsNotNull,
 } from "../middlewares/rentals.middlewares.js";
@@ -31,7 +31,12 @@ router.post(
   rentalsController.updateById
 );
 
-router.get("/", validateSchema(showRentalSchema), buildListRentalsQuery, rentalsController.listAll);
+router.get(
+  "/",
+  validateSchema(showRentalSchema),
+  buildListQuery("listRentals"),
+  rentalsController.listAll
+);
 
 router.delete(
   "/:id",

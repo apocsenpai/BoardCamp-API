@@ -1,7 +1,8 @@
 import { Router } from "express";
 import customersController from "../controllers/customers.controller.js";
-import { buildListCustomersQuery, verifyCpfOwner } from "../middlewares/customers.middlewares.js";
+import { verifyCpfOwner } from "../middlewares/customers.middlewares.js";
 import {
+  buildListQuery,
   isDataAlreadyExist,
   validateSchema,
 } from "../middlewares/global.middlewares.js";
@@ -22,7 +23,7 @@ router.post(
 router.get(
   "/",
   validateSchema(showCostumerSchema),
-  buildListCustomersQuery,
+  buildListQuery("listCustomers"),
   customersController.listAll
 );
 router.get("/:id", validateSchema(idSchema), customersController.listById);

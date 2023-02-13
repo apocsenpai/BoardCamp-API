@@ -1,6 +1,12 @@
 import sanitizeObject from "../utils/functions/sanitizeObject.js";
 import db from "../database/database.connection.js";
 import internalServerError from "../utils/functions/internalServerError.js";
+import baseQuerys from "../utils/constants/baseQuerys.js";
+import {
+  handleCustomersWhereParams,
+  handleGamesWhereParams,
+  handleRentalsWhereParams,
+} from "../utils/functions/whereParamsBuilders.js";
 
 export function validateSchema(schema) {
   return (req, res, next) => {
@@ -69,5 +75,41 @@ export function checkIdIsRegisteredInThatTable(table, key) {
     } catch (error) {
       internalServerError(res, error);
     }
+  };
+}
+
+export function buildListQuery(queryKey) {
+  return (req, res, next) => {
+    const queryParams = res.sanitizedParams;
+    const baseQuery = baseQuerys[queryKey];
+
+    if (!Object.keys(queryParams).length) {
+      res.locals.query = baseQuery;
+      return next();
+    }
+
+    const order = queryParams.order ? `ORDER BY ${queryParams.order}` : "";
+    const desc = order && queryParams.desc ? `DESC` : "";
+    const limit = queryParams.limit ? `LIMIT ${queryParams.limit}` : "";
+    const offset = queryParams.offset ? `OFFSET ${queryParams.offset}` : "";
+
+    const whereParams = [];
+
+    if (queryKey === "listRentals")
+      whereParams.push(...handleRentalsWhereParams(queryParams));
+
+    if (queryKey === "listGames")
+      whereParams.push(...handleGamesWhereParams(queryParams));
+
+    if (queryKey === "listCustomers")
+      whereParams.push(...handleCustomersWhereParams(queryParams));
+
+    const whereQuery = whereParams.length
+      ? `WHERE ${whereParams.join(" AND ")}`
+      : "";
+
+    res.locals.query = `${baseQuery} ${whereQuery} ${order} ${desc} ${limit} ${offset}`;
+
+    next();
   };
 }

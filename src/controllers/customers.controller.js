@@ -18,7 +18,7 @@ async function create(req, res) {
 
 async function listAll(req, res) {
   const { query } = res.locals;
-
+  
   try {
     const { rows: customers } = await db.query(query);
 
