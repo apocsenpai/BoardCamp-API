@@ -88,7 +88,7 @@ export function buildListQuery(queryKey) {
       return next();
     }
 
-    const order = queryParams.order ? `ORDER BY ${queryParams.order}` : "";
+    const order = queryParams.order ? `ORDER BY "${queryParams.order}"` : "";
     const desc = order && queryParams.desc ? `DESC` : "";
     const limit = queryParams.limit ? `LIMIT ${queryParams.limit}` : "";
     const offset = queryParams.offset ? `OFFSET ${queryParams.offset}` : "";
